@@ -8,7 +8,7 @@ export default function SchoolTransactions() {
   const [data, setData] = useState([]);
   const [total, setTotal] = useState(0);
   const [page, setPage] = useState(1);
-  const [limit] = useState(10);
+  const [limit, setLimit] = useState(10);
   const [loading, setLoading] = useState(false);
   const [sort, setSort] = useState("payment_time");
   const [order, setOrder] = useState("desc");
@@ -52,13 +52,24 @@ export default function SchoolTransactions() {
     <div>
       <h2 className="text-xl font-semibold mb-4">Transactions by School</h2>
 
-      <div className="bg-white p-4 rounded shadow mb-4 flex items-center gap-3">
+      <div className="flex flex-col md:flex-row md:items-center gap-3 mb-4">
         <input
           placeholder="Enter school_id (e.g. 65b0e6...)"
           className="border px-3 py-2 rounded flex-1"
           value={schoolId}
           onChange={(e) => setSchoolId(e.target.value)}
         />
+        <select
+          value={limit}
+          onChange={(e) => setLimit(Number(e.target.value))}
+          className="border px-3 py-2 rounded"
+        >
+          {[10, 20, 50].map((l) => (
+            <option key={l} value={l}>
+              Rows per page: {l}
+            </option>
+          ))}
+        </select>
         <button
           onClick={onSearch}
           className="px-4 py-2 bg-indigo-600 text-white rounded"

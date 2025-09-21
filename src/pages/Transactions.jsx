@@ -12,6 +12,7 @@ export default function Transactions() {
   const [total, setTotal] = useState(0);
   const [loading, setLoading] = useState(false);
 
+  const [searchOrder, setSearchOrder] = useState("");
   const [limit, setLimit] = useState(
     parseIntOrDefault(searchParams.get("limit"), 10)
   );
@@ -25,7 +26,7 @@ export default function Transactions() {
 
   useEffect(() => {
     load();
-  }, [page, limit, status, schoolId, sort, order]);
+  }, [page, limit, status, schoolId, sort, order, searchOrder]);
 
   async function load() {
     setLoading(true);
@@ -33,6 +34,7 @@ export default function Transactions() {
       const params = { limit, page, sort, order };
       if (status) params.status = status;
       if (schoolId) params.school_id = schoolId;
+      if (searchOrder) params.order_id = searchOrder;
       const res = await fetchTransactions(params);
       setData(res.data || res);
       setTotal(res.total ?? (res.data ? res.data.length : 0));
@@ -63,6 +65,7 @@ export default function Transactions() {
   function onClear() {
     setStatus("");
     setSchoolId("");
+    setSearchOrder("");
     setPage(1);
     setSort("payment_time");
     setOrder("desc");
@@ -79,6 +82,26 @@ export default function Transactions() {
   return (
     <div>
       <h2 className="text-xl font-semibold mb-4">Transactions Overview</h2>
+
+      <div className="flex flex-col md:flex-row md:items-center md:space-x-4 mb-4">
+        <input
+          placeholder="Search Order ID"
+          className="border px-3 py-2 rounded mb-2 md:mb-0"
+          value={searchOrder}
+          onChange={(e) => setSearchOrder(e.target.value)}
+        />
+        <select
+          value={limit}
+          onChange={(e) => setLimit(Number(e.target.value))}
+          className="border px-3 py-2 rounded"
+        >
+          {[10, 20, 50].map((l) => (
+            <option key={l} value={l}>
+              Rows per page: {l}
+            </option>
+          ))}
+        </select>
+      </div>
 
       <Filters
         status={status}
